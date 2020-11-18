@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BlazorMessenger.Intefaces
 {
-    interface IFollowerRepository
+    public interface IFollowerRepository
     {
         IEnumerable<Follower> GetFollowers(int userId);
         IEnumerable<Follower> GetAll();
