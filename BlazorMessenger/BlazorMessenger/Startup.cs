@@ -31,7 +31,6 @@ namespace BlazorMessenger
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
             services.AddDbContext<MessengerContext>();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
