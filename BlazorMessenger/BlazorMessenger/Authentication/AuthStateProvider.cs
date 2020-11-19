@@ -38,5 +38,13 @@ namespace BlazorMessenger.Authentication
             var userPrincipals = new ClaimsPrincipal(new[] { userIdentity });
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(userPrincipals)));
         }
+
+        public void LogoutUser()
+        {
+            _sessionStorage.RemoveItemAsync("username");
+            var identity = new ClaimsIdentity();
+            var user = new ClaimsPrincipal(identity);
+            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
+        }
     }
 }
