@@ -13,7 +13,7 @@ namespace BlazorMessenger.Authentication
         {
             var identity = new ClaimsIdentity(new[] {
                 new Claim(ClaimTypes.Name, "hazhar")
-            });
+            }, "apiauth_type");
             var user = new ClaimsPrincipal(identity);
             return Task.FromResult(new AuthenticationState(user));
         }
