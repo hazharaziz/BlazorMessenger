@@ -5,6 +5,7 @@
     <UserSecretsId>d54e9f30-f59c-4701-8c85-b24549528083</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Blazored.SessionStorage" Version="1.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

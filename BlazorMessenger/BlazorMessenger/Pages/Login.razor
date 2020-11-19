@@ -1,7 +1,10 @@
 ﻿@page "/login"
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager Navigator
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 
 <h3>Login</h3>
-<EditForm Model="@user" OnInvalidSubmit="@ValidatUser">
+<EditForm Model="@user" OnValidSubmit="@ValidatUser">
 
     <div>
         <input type="text" @bind="@user.Username" id="username-input" />
@@ -29,7 +32,9 @@
 
     private async Task<bool> ValidatUser()
     {
-
+        ((AuthStateProvider)AuthenticationStateProvider).AuthenticateUser(user.Username);
+        Navigator.NavigateTo("/");
+        await sessionStorage.SetItemAsync("username", user.Username);
         return await Task.FromResult(true);
     }
 }

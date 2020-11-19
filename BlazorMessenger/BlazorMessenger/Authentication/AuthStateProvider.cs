@@ -1,4 +1,5 @@
-﻿using BlazorMessenger.Models;
+﻿using Blazored.SessionStorage;
+using BlazorMessenger.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using System;
 using System.Collections.Generic;
@@ -10,21 +11,28 @@ namespace BlazorMessenger.Authentication
 {
     public class AuthStateProvider : AuthenticationStateProvider
     {
-        public override Task<AuthenticationState> GetAuthenticationStateAsync()
+        private ISessionStorageService _sessionStorage;
+        public AuthStateProvider(ISessionStorageService sessionStorage)
         {
-            var identity = new ClaimsIdentity(new[] {
-                new Claim(ClaimTypes.Name, "hazhar")
-            }, "apiauth_type");
-            var user = new ClaimsPrincipal(identity);
-            return Task.FromResult(new AuthenticationState(user));
+            _sessionStorage = sessionStorage;
         }
 
-        public void AuthenticateUser(User user)
+        public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+        {
+            string username = await _sessionStorage.GetItemAsync<string>("username");
+            var identity = (username != null) ? new ClaimsIdentity(new[]
+            {
+                new Claim(ClaimTypes.Name, username)
+            }, "User Identity") : new ClaimsIdentity();
+            var user = new ClaimsPrincipal(identity);
+            return await Task.FromResult(new AuthenticationState(user));
+        }
+
+        public void AuthenticateUser(string username)
         {
             var userClaims = new List<Claim>()
             {
-                new Claim("Username", user.Username),
-                new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}")
+                new Claim(ClaimTypes.Name, username),
             };
             var userIdentity = new ClaimsIdentity(userClaims, "User Identity");
             var userPrincipals = new ClaimsPrincipal(new[] { userIdentity });

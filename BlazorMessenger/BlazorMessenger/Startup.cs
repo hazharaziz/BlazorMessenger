@@ -9,6 +9,7 @@ using BlazorMessenger.Context;
 using BlazorMessenger.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
 using BlazorMessenger.Authentication;
+using Blazored.SessionStorage;
 
 namespace BlazorMessenger
 {
@@ -33,6 +34,7 @@ namespace BlazorMessenger
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddDistributedMemoryCache();
             services.AddSession();
+            services.AddBlazoredSessionStorage();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
