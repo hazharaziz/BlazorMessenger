@@ -3,10 +3,10 @@
 @inject NavigationManager Navigator
 @inject Blazored.SessionStorage.ISessionStorageService SessionStorage
 @inject IJSRuntime JsRuntime
+@inject IUnitOfWork UnitOfWork
 
 <h3>Login</h3>
 <EditForm Model="@user" OnValidSubmit="@ValidatUser">
-
     <div>
         <input type="text" @bind="@user.Username" id="username-input" />
         <label for="username-input">Username</label>
@@ -18,7 +18,7 @@
     </div>
 
     <div>
-        <input type="checkbox" @onclick="(() => TogglePassword())" id="toggle-password-checkbox"/>
+        <input type="checkbox" @onclick="(() => TogglePassword())" id="toggle-password-checkbox" />
         <label for="toggle-password-checkbox">Show Password</label>
     </div>
 
@@ -39,10 +39,28 @@
 
     private async Task<bool> ValidatUser()
     {
-        ((AuthStateProvider)AuthenticationStateProvider).AuthenticateUser(user.Username);
-        Navigator.NavigateTo("/");
-        await SessionStorage.SetItemAsync("username", user.Username);
-        return await Task.FromResult(true);
+        try
+        {
+            User fetchedUser = UnitOfWork.Users.GetByUsername(user.Username);
+            bool correctPassword = (fetchedUser != null) ? (user.Password == fetchedUser.Password) : false;
+            if (correctPassword)
+            {
+                ((AuthStateProvider)AuthenticationStateProvider).AuthenticateUser(user.Username);
+                Navigator.NavigateTo("/");
+                await SessionStorage.SetItemAsync("username", user.Username);
+                return await Task.FromResult(true);
+            } 
+            else
+            {
+                return await Task.FromResult(false);
+            }
+
+        }
+        catch (Exception e)
+        {
+            return await Task.FromResult(false);
+        }
+
     }
 
     public async void TogglePassword()
