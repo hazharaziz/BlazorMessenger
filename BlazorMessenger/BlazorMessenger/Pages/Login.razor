@@ -1,7 +1,8 @@
 ﻿@page "/login"
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager Navigator
-@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+@inject IJSRuntime JsRuntime
 
 <h3>Login</h3>
 <EditForm Model="@user" OnValidSubmit="@ValidatUser">
@@ -12,8 +13,13 @@
     </div>
 
     <div>
-        <input type="text" @bind="@user.Password" id="password-input" />
+        <input type="password" @ref="@passwordInput" @bind="@user.Password" id="password-input" />
         <label for="password-input">Password</label>
+    </div>
+
+    <div>
+        <input type="checkbox" @onclick="(() => TogglePassword())" id="toggle-password-checkbox"/>
+        <label for="toggle-password-checkbox">Show Password</label>
     </div>
 
     <input type="submit" value="Login" />
@@ -22,6 +28,7 @@
 
 @code {
 
+    private ElementReference passwordInput;
     private User user;
 
     protected override Task OnInitializedAsync()
@@ -34,7 +41,12 @@
     {
         ((AuthStateProvider)AuthenticationStateProvider).AuthenticateUser(user.Username);
         Navigator.NavigateTo("/");
-        await sessionStorage.SetItemAsync("username", user.Username);
+        await SessionStorage.SetItemAsync("username", user.Username);
         return await Task.FromResult(true);
+    }
+
+    public async void TogglePassword()
+    {
+        await JsRuntime.InvokeVoidAsync("togglePassword", passwordInput);
     }
 }

@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <div class="sidebar">
     <NavMenu />
@@ -6,9 +7,18 @@
 
 <div class="main">
     <div class="top-row">
-        <div class="px-2">
-            <a href="/login" target="_self">Login</a>
-        </div>
+        <AuthorizeView>
+            <Authorized>
+                <div class="px-2">
+                    <a href="/login" @onclick="(() => Logout())" target="_self">Logout</a>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <div class="px-2">
+                    <a href="/login" target="_self">Login</a>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
         <div class="px-2">
             <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
         </div>
@@ -19,3 +29,11 @@
         @Body
     </div>
 </div>
+
+
+@code {
+    public void Logout()
+    {
+        ((AuthStateProvider)AuthenticationStateProvider).LogoutUser();
+    }
+}
