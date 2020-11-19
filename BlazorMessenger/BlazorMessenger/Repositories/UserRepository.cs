@@ -6,7 +6,7 @@ using BlazorMessenger.DataContext;
 using BlazorMessenger.Interfaces;
 using BlazorMessenger.Models;
 
-namespace WebChat.Services
+namespace BlazorMessenger.Repositories
 {
     public class UserRepository : IUserRepository
     {

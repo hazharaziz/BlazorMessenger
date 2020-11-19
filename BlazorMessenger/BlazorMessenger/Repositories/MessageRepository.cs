@@ -8,7 +8,7 @@ using BlazorMessenger.Interfaces;
 using BlazorMessenger.Models;
 using BlazorMessenger.DataContext;
 
-namespace WebChat.Services
+namespace BlazorMessenger.Repositories
 {
     public class MessageRepository : IMessageRepository
     {
