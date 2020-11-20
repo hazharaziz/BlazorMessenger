@@ -31,7 +31,7 @@ namespace BlazorMessenger
             services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
             services.AddSingleton<WeatherForecastService>();
             services.AddDbContext<MessengerContext>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddDistributedMemoryCache();
             services.AddSession();
             services.AddBlazoredSessionStorage();

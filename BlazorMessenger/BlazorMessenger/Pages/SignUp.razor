@@ -1,11 +1,11 @@
-﻿@page "/login"
+﻿@page "/signup"
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager Navigator
 @inject Blazored.SessionStorage.ISessionStorageService SessionStorage
 @inject IJSRuntime JsRuntime
 @inject IUnitOfWork UnitOfWork
 
-<h3>Login</h3>
+<h3>Sign up</h3>
 <EditForm Model="@user" OnValidSubmit="@ValidatUser">
     <div>
         <input type="text" @bind="@user.Username" id="username-input" />
@@ -22,8 +22,18 @@
         <label for="toggle-password-checkbox">Show Password</label>
     </div>
 
-    <input type="submit" value="Login" />
-    <a href="/signup">Sign up</a>
+    <div>
+        <input type="text" @bind="@user.FirstName" id="firstName-input" />
+        <label for="firstName-input">First Name</label>
+    </div>
+    <div>
+        <input type="text" @bind="@user.LastName" id="lastName-input" />
+        <label for="lastName-input">Last Name</label>
+    </div>
+
+
+    <input type="submit" value="Sign up" />
+    <a href="/login">Login</a>
 </EditForm>
 
 
@@ -42,15 +52,15 @@
     {
         try
         {
-            User fetchedUser = UnitOfWork.Users.GetByUsername(user.Username);
-            bool correctPassword = (fetchedUser != null) ? (user.Password == fetchedUser.Password) : false;
-            if (correctPassword)
+            if (user != null)
             {
+                UnitOfWork.Users.Add(user);
+                UnitOfWork.Save();
                 ((AuthStateProvider)AuthenticationStateProvider).AuthenticateUser(user.Username);
                 Navigator.NavigateTo("/");
                 await SessionStorage.SetItemAsync("username", user.Username);
                 return await Task.FromResult(true);
-            } 
+            }
             else
             {
                 return await Task.FromResult(false);
