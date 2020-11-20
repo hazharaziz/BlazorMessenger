@@ -28,11 +28,12 @@ namespace BlazorMessenger.Authentication
             return await Task.FromResult(new AuthenticationState(user));
         }
 
-        public void AuthenticateUser(string username)
+        public void AuthenticateUser(string name, string username)
         {
             var userClaims = new List<Claim>()
             {
-                new Claim(ClaimTypes.Name, username),
+                new Claim(ClaimTypes.Name, name),
+                new Claim("Username", username)
             };
             var userIdentity = new ClaimsIdentity(userClaims, "User Identity");
             var userPrincipals = new ClaimsPrincipal(new[] { userIdentity });

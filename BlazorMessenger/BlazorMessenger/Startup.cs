@@ -10,6 +10,7 @@ using BlazorMessenger.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
 using BlazorMessenger.Authentication;
 using Blazored.SessionStorage;
+using BlazorMessenger.Services;
 
 namespace BlazorMessenger
 {
@@ -29,6 +30,7 @@ namespace BlazorMessenger
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
+            services.AddTransient<IAuthenticationAPI, AuthenticationAPI>();
             services.AddSingleton<WeatherForecastService>();
             services.AddDbContext<MessengerContext>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();

@@ -1,6 +1,6 @@
 ﻿@page "/login"
-@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager Navigator
+@inject IAuthenticationAPI API
 @inject Blazored.SessionStorage.ISessionStorageService SessionStorage
 @inject IJSRuntime JsRuntime
 @inject IUnitOfWork UnitOfWork
@@ -42,19 +42,10 @@
     {
         try
         {
-            User fetchedUser = UnitOfWork.Users.GetByUsername(user.Username);
-            bool correctPassword = (fetchedUser != null) ? (user.Password == fetchedUser.Password) : false;
-            if (correctPassword)
-            {
-                ((AuthStateProvider)AuthenticationStateProvider).AuthenticateUser(user.Username);
-                Navigator.NavigateTo("/");
-                await SessionStorage.SetItemAsync("username", user.Username);
-                return await Task.FromResult(true);
-            } 
-            else
-            {
-                return await Task.FromResult(false);
-            }
+            API.LoginUser(user);
+            Navigator.NavigateTo("/");
+            await SessionStorage.SetItemAsync("username", user.Username);
+            return await Task.FromResult(true);
 
         }
         catch (Exception e)

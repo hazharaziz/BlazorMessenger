@@ -1,6 +1,6 @@
 ﻿@page "/signup"
-@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager Navigator
+@inject IAuthenticationAPI API
 @inject Blazored.SessionStorage.ISessionStorageService SessionStorage
 @inject IJSRuntime JsRuntime
 @inject IUnitOfWork UnitOfWork
@@ -34,13 +34,14 @@
 
     <input type="submit" value="Sign up" />
     <a href="/login">Login</a>
-</EditForm>
+</EditForm> 
 
 
 @code {
 
     private ElementReference passwordInput;
     private User user;
+    private string error;
 
     protected override Task OnInitializedAsync()
     {
@@ -52,20 +53,10 @@
     {
         try
         {
-            if (user != null)
-            {
-                UnitOfWork.Users.Add(user);
-                UnitOfWork.Save();
-                ((AuthStateProvider)AuthenticationStateProvider).AuthenticateUser(user.Username);
-                Navigator.NavigateTo("/");
-                await SessionStorage.SetItemAsync("username", user.Username);
-                return await Task.FromResult(true);
-            }
-            else
-            {
-                return await Task.FromResult(false);
-            }
-
+            API.SignUpUser(user);
+            Navigator.NavigateTo("/");
+            await SessionStorage.SetItemAsync("username", user.Username);
+            return await Task.FromResult(true);
         }
         catch (Exception e)
         {

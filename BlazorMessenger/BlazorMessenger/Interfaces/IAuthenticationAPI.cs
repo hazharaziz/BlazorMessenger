@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace BlazorMessenger.Interfaces
 {
-    public interface ILoginAPI
+    public interface IAuthenticationAPI
     {
-        User FetchUser(string username);
-        bool ValidateUserLoginRequest(User user);
-        void AuthenticateUser(User user);
+        void LoginUser(User user);
+        void SignUpUser(User user);
+        void LogoutUser(User user);
     }
 }
