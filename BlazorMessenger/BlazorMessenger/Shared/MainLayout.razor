@@ -1,37 +1,38 @@
 ﻿@inherits LayoutComponentBase
 @inject IAuthenticationAPI API
 
-<div class="sidebar">
-    <NavMenu />
-</div>
 
-<div class="main">
-    <div class="top-row">
-        <AuthorizeView>
-            <Authorized>
-                <div class="px-2">
-                    <a href="/login" @onclick="(() => Logout())" target="_self">Logout</a>
-                </div>
-            </Authorized>
-            <NotAuthorized>
-                <div class="px-2">
-                    <a href="/login" target="_self">Login</a>
-                </div>
-            </NotAuthorized>
-        </AuthorizeView>
-        <div class="px-2">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+<AuthorizeView>
+    <Authorized>
+        <div class="sidebar">
+            <NavMenu />
         </div>
-    </div>
 
+        <div class="main">
+            <div class="top-row">
+                <div class="px-2">
+                    <a href="/" @onclick="(() => Logout())" target="_self">Logout</a>
+                </div>
+                <div class="px-2">
+                    <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+                </div>
+            </div>
+            <div class="content px-4">
+                @Body
+            </div>
+        </div>
 
-    <div class="content px-4">
-        @Body
-    </div>
-</div>
+    </Authorized>
+    <NotAuthorized>
+        <Login />
+    </NotAuthorized>
+
+</AuthorizeView>
+
 
 
 @code {
+
     public void Logout()
     {
         API.LogoutUser();

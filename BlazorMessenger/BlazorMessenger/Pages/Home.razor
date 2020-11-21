@@ -1,61 +1,62 @@
-﻿@page "/"
-@page "/home"
+﻿@page "/home"
 @inject Blazored.SessionStorage.ISessionStorageService SessionStorage
 @inject IMessengerAPI API
+@inject IJSRuntime JsRuntime
 
-<AuthorizeView Context="AuthContext">
-    <Authorized>
-        @foreach (var message in messages)
+@foreach (var message in messages)
+{
+    var dateTime = (DateTime)message.DateTime;
+    <div id="message-@message.Id" style="border-bottom: 1px black solid; padding: 10px;">
+        <a>@message.ComposerName</a>
+        @if (message.ReplyToId != 0)
         {
-            var dateTime = (DateTime)message.DateTime;
-            <div id="message-@message.Id" style="border-bottom: 1px black solid; padding: 10px;">
-                <a href="#">@message.ComposerName</a>
-                @if (message.ReplyToId != 0)
-                {
-                    var repliedMessage = messages.Find(m => m.Id == message.ReplyToId);
-                    var text = (repliedMessage == null) ? "Deleted message" : repliedMessage.Text;
-                    var id = (repliedMessage == null) ? "#" : $"message-{repliedMessage.Id}";
-                    <br />
-                    <a href="@id">
-                        Reply to: @text
-                    </a>
-                }
-                <p>@message.Text</p>
-                <span>@dateTime.Hour : @dateTime.Minute</span>
-                <div class="row">
-                    <button class="col-1 btn-link" @onclick="(() => SetReplyMessageId(message.Id))">Reply</button>
-                </div>
-            </div>
+            var repliedMessage = messages.Find(m => m.Id == message.ReplyToId);
+            var text = (repliedMessage == null) ? "Deleted message" : repliedMessage.Text;
+            var id = (repliedMessage == null) ? "" : $"message-{repliedMessage.Id}";
+            <br />
+            <button class="nav-link" @onclick="(() => ScrollTo(id))">
+                Reply to: @text
+            </button>
         }
-        <EditForm Model="@message" OnValidSubmit="@SubmitMessage" class="mr-auto" style="margin: 10px;">
-            @if (replyMessageId != 0)
+        <p>@message.Text</p>
+        <span>@dateTime.Hour : @dateTime.Minute</span>
+        <div class="row">
+            <button class="col-1 btn-link" @onclick="(() => SetReplyMessageId(message.Id))">Reply</button>
+            @if (currentUser.Id == message.ComposerId)
             {
-                var text = messages.Find(m => m.Id == replyMessageId).Text;
-                text = text.Substring(0, text.Length > 10 ? 10 : text.Length) + " ...";
-                <div style="display: block;">
-                    <a href="#message-@replyMessageId">Reply to : @text</a>
-                </div>
+                <button class="col-1 btn-link" @onclick="(() => SetEditedMessage(message.Id, message.Text))">Edit</button>
             }
-            <div style="display: block;">
-                <input class="col-8" @bind="@message.Text" type="text" id="message-input" placeholder="Enter message"/>
-                <input class="col-2" type="submit" value="Submit"/>
-            </div>
-        </EditForm>
-    </Authorized>
-    <NotAuthorized>
-        <Login />
-    </NotAuthorized>
-</AuthorizeView>
+        </div>
+    </div>
+}
+<EditForm Model="@message" OnValidSubmit="@SubmitMessage" class="mr-auto" style="margin: 10px;">
+    @if (replyMessageId != 0)
+    {
+        var text = messages.Find(m => m.Id == replyMessageId).Text;
+        text = text.Substring(0, text.Length > 10 ? 10 : text.Length) + " ...";
+        <div style="display: block;">
+            <a href="#message-@replyMessageId">Reply to : @text</a>
+        </div>
+    }
+    <div style="display: block;">
+        <input class="col-8" @bind="@message.Text" type="text" id="message-input" placeholder="Enter message" />
+        <input class="col-2" type="submit" value="Submit" />
+    </div>
+</EditForm>
+
 
 @code {
     private User currentUser;
     private List<Message> messages;
     private Message message;
     private int replyMessageId;
+    private int editMessageId;
 
     protected override async Task OnInitializedAsync()
     {
         replyMessageId = 0;
+        editMessageId = 0;
+        messages = new List<Message>();
         message = new Message();
         currentUser = new User();
         await base.OnInitializedAsync();
@@ -74,15 +75,23 @@
     {
         try
         {
-            message.ComposerId = currentUser.Id;
-            message.ComposerName = $"{currentUser.FirstName} {currentUser.LastName}";
-            if (replyMessageId != 0)
+            if (editMessageId != 0)
             {
-                message.ReplyToId = replyMessageId;
+                API.EditMessage(editMessageId, message.Text);
             }
-            API.AddMessage(message);
+            else
+            {
+                message.ComposerId = currentUser.Id;
+                message.ComposerName = $"{currentUser.FirstName} {currentUser.LastName}";
+                if (replyMessageId != 0)
+                {
+                    message.ReplyToId = replyMessageId;
+                }
+                API.AddMessage(message);
+            }
             replyMessageId = 0;
-            message.Text = "";
+            editMessageId = 0;
+            message = new Message();
             StateHasChanged();
             return await Task.FromResult(true);
         }
@@ -96,5 +105,20 @@
     {
         replyMessageId = id;
         StateHasChanged();
+    }
+
+    private void SetEditedMessage(int id, string newText)
+    {
+        message.Text = newText;
+        editMessageId = id;
+        StateHasChanged();
+    }
+
+    private async void ScrollTo(string elementId)
+    {
+        if (elementId != "")
+        {
+            await JsRuntime.InvokeVoidAsync("BlazorScrollToId", elementId);
+        }
     }
 }

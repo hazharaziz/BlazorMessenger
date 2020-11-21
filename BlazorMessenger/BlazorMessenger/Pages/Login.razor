@@ -1,4 +1,6 @@
-﻿@page "/login"
+﻿@layout AuthenticationLayout
+@page "/"
+@page "/login"
 @inject NavigationManager Navigator
 @inject IAuthenticationAPI API
 @inject Blazored.SessionStorage.ISessionStorageService SessionStorage
@@ -43,7 +45,7 @@
         try
         {
             API.LoginUser(user);
-            Navigator.NavigateTo("/");
+            Navigator.NavigateTo("/home");
             await SessionStorage.SetItemAsync("username", user.Username);
             return await Task.FromResult(true);
         }
