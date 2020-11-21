@@ -12,18 +12,34 @@
                 <a href="#">@message.ComposerName</a>
                 @if (message.ReplyToId != 0)
                 {
+                    var repliedMessage = messages.Find(m => m.Id == message.ReplyToId);
+                    var text = (repliedMessage == null) ? "Deleted message" : repliedMessage.Text;
+                    var id = (repliedMessage == null) ? "#" : $"message-{repliedMessage.Id}";
                     <br />
-                    <a href="#message-@message.ReplyToId">
-                        Reply to: @messages.FirstOrDefault(m => m.Id == message.ReplyToId).Text
+                    <a href="@id">
+                        Reply to: @text
                     </a>
                 }
                 <p>@message.Text</p>
                 <span>@dateTime.Hour : @dateTime.Minute</span>
+                <div class="row">
+                    <button class="col-1 btn-link" @onclick="(() => SetReplyMessageId(message.Id))">Reply</button>
+                </div>
             </div>
         }
-        <EditForm Model="@message" OnValidSubmit="@SubmitMessage" class="d-flex justify-content-center row" >
-            <input class="col-8" @bind="@message.Text" type="text" id="message-input" placeholder="Enter message"/>
-            <input class="col-2" type="submit" value="Submit"/>
+        <EditForm Model="@message" OnValidSubmit="@SubmitMessage" class="mr-auto" style="margin: 10px;">
+            @if (replyMessageId != 0)
+            {
+                var text = messages.Find(m => m.Id == replyMessageId).Text;
+                text = text.Substring(0, text.Length > 10 ? 10 : text.Length) + " ...";
+                <div style="display: block;">
+                    <a href="#message-@replyMessageId">Reply to : @text</a>
+                </div>
+            }
+            <div style="display: block;">
+                <input class="col-8" @bind="@message.Text" type="text" id="message-input" placeholder="Enter message"/>
+                <input class="col-2" type="submit" value="Submit"/>
+            </div>
         </EditForm>
     </Authorized>
     <NotAuthorized>
@@ -35,28 +51,50 @@
     private User currentUser;
     private List<Message> messages;
     private Message message;
+    private int replyMessageId;
 
     protected override async Task OnInitializedAsync()
     {
+        replyMessageId = 0;
         message = new Message();
-        messages = API.FetchMessages();
         currentUser = new User();
         await base.OnInitializedAsync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        messages = API.FetchMessages();
         string currentUsername = await SessionStorage.GetItemAsync<string>("username");
         currentUser = API.GetCurrentUser(currentUsername);
         StateHasChanged();
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private void SubmitMessage()
+    private async Task<bool> SubmitMessage()
     {
-        message.ComposerId = currentUser.Id;
-        message.ComposerName = $"{currentUser.FirstName} {currentUser.LastName}";
-        API.AddMessage(message);
+        try
+        {
+            message.ComposerId = currentUser.Id;
+            message.ComposerName = $"{currentUser.FirstName} {currentUser.LastName}";
+            if (replyMessageId != 0)
+            {
+                message.ReplyToId = replyMessageId;
+            }
+            API.AddMessage(message);
+            replyMessageId = 0;
+            message.Text = "";
+            StateHasChanged();
+            return await Task.FromResult(true);
+        }
+        catch
+        {
+            return await Task.FromResult(false);
+        }
+    }
+
+    private void SetReplyMessageId(int id)
+    {
+        replyMessageId = id;
         StateHasChanged();
     }
 }
