@@ -42,5 +42,8 @@ namespace BlazorMessenger.Services
             message.Text = editedMessage;
             _unitOfWork.Save();
         }
+
+        public User GetCurrentUser(string username)
+            => _unitOfWork.Users.GetByUsername(username);
     }
 }

@@ -1,10 +1,26 @@
 ﻿@page "/"
 @page "/home"
 @inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+@inject IMessengerAPI API
 
 <AuthorizeView>
     <Authorized>
-        <p>Chat page</p>
+        @foreach (var message in messages)
+        {
+            var dateTime = (DateTime)message.DateTime;
+            <div id="message-@message.Id" style="border-bottom: 1px black solid; padding: 10px;">
+                <a>@message.ComposerName</a>
+                @if (message.ReplyToId != 0)
+                {
+                    <br />
+                    <a href="#message-@message.ReplyToId">
+                        Reply to: @messages.FirstOrDefault(m => m.Id == message.ReplyToId).Text
+                    </a>
+                }
+                <p>@message.Text</p>
+                <span>@dateTime.Hour : @dateTime.Minute</span>
+            </div>
+        }
     </Authorized>
     <NotAuthorized>
         <Login />
@@ -12,5 +28,14 @@
 </AuthorizeView>
 
 @code {
+    private User currentUser;
+    private List<Message> messages;
 
+    protected override async Task OnInitializedAsync()
+    {
+        messages = API.FetchMessages();
+        string currentUsername = await SessionStorage.GetItemAsync<string>("username");
+        currentUser = API.GetCurrentUser(currentUsername);
+        StateHasChanged();
+    }
 }
