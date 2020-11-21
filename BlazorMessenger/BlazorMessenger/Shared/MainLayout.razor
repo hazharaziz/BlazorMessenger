@@ -1,5 +1,5 @@
 ﻿@inherits LayoutComponentBase
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IAuthenticationAPI API
 
 <div class="sidebar">
     <NavMenu />
@@ -34,6 +34,6 @@
 @code {
     public void Logout()
     {
-        ((AuthStateProvider)AuthenticationStateProvider).LogoutUser();
+        API.LogoutUser();
     }
 }

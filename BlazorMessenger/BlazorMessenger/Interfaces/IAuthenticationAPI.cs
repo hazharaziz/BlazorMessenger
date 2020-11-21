@@ -10,6 +10,6 @@ namespace BlazorMessenger.Interfaces
     {
         void LoginUser(User user);
         void SignUpUser(User user);
-        void LogoutUser(User user);
+        void LogoutUser();
     }
 }

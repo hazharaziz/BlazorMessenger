@@ -18,10 +18,6 @@ namespace BlazorMessenger.Services
             _unitOfWork = unitOfWork;
         }
 
-        public void AuthenticateUser(User user)
-        {
-        }
-
         public void LoginUser(User user)
         {
             User fetchedUser = FetchUser(user.Username);
@@ -43,11 +39,6 @@ namespace BlazorMessenger.Services
             }
         }
 
-        public void LogoutUser(User user)
-        {
-            throw new NotImplementedException();
-        }
-
         public void SignUpUser(User user)
         {
             User fetchedUser = FetchUser(user.Username);
@@ -59,6 +50,11 @@ namespace BlazorMessenger.Services
             _unitOfWork.Save();
             string name = $"{user.FirstName} {user.LastName}";
             _authStateProvider.AuthenticateUser(name, user.Username);
+        }
+
+        public void LogoutUser()
+        {
+            _authStateProvider.LogoutUser();
         }
 
         private User FetchUser(string username)
