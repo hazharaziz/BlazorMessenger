@@ -1,8 +1,15 @@
 ﻿@page "/"
 @inject Blazored.SessionStorage.ISessionStorageService SessionStorage
 
-<h2>Hello world!</h2>
-<p>Welcome @Username</p>
+<AuthorizeView>
+    <Authorized>
+        <h2>Hello world!</h2>
+        <p>Welcome @Username</p>
+    </Authorized>
+    <NotAuthorized>
+        <Login />
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
 
