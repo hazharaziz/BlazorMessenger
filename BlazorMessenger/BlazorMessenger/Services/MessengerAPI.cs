@@ -1,5 +1,7 @@
 ﻿using BlazorMessenger.Authentication;
+using BlazorMessenger.Data;
 using BlazorMessenger.Interfaces;
+using BlazorMessenger.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using System;
 using System.Collections.Generic;
@@ -8,15 +10,37 @@ using System.Threading.Tasks;
 
 namespace BlazorMessenger.Services
 {
-    public class MessengerAPI
+    public class MessengerAPI : IMessengerAPI
     {
-        private AuthStateProvider _authStateProvider;
         private IUnitOfWork _unitOfWork;
 
-        public MessengerAPI(AuthenticationStateProvider authenticationStateProvider, IUnitOfWork unitOfWork)
+        public MessengerAPI(IUnitOfWork unitOfWork)
         {
-            _authStateProvider = authenticationStateProvider as AuthStateProvider;
             _unitOfWork = unitOfWork;
+        }
+
+        public List<Message> FetchMessages()
+            => _unitOfWork.Messages.GetAll().ToList();
+
+        public void AddMessage(Message message)
+        {
+            if (message == null)
+            {
+                throw new Exception(Alerts.InvalidMessage);
+            }
+            _unitOfWork.Messages.Add(message);
+            _unitOfWork.Save();
+        }
+
+        public void EditMessage(int id, string editedMessage)
+        {
+            if (editedMessage == string.Empty)
+            {
+                throw new Exception(Alerts.InvalidMessage);
+            }
+            Message message = _unitOfWork.Messages.Get(id);
+            message.Text = editedMessage;
+            _unitOfWork.Save();
         }
     }
 }
