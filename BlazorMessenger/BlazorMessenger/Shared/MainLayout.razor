@@ -26,7 +26,14 @@
 
 
     <div class="content px-4">
-        @Body
+        <AuthorizeView>
+            <Authorized>
+                @Body
+            </Authorized>
+            <NotAuthorized>
+                <Login />
+            </NotAuthorized>
+        </AuthorizeView>
     </div>
 </div>
 

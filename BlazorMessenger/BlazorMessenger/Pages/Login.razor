@@ -46,7 +46,6 @@
             Navigator.NavigateTo("/");
             await SessionStorage.SetItemAsync("username", user.Username);
             return await Task.FromResult(true);
-
         }
         catch (Exception e)
         {

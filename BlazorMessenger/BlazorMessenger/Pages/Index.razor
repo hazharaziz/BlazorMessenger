@@ -1,11 +1,16 @@
 ﻿@page "/"
+@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
 
-<AuthorizeView>
-    <Authorized>
-        <p>Welcome @context.User.Identity.Name</p>
-    </Authorized>
-    <NotAuthorized>
-        <Login />
-    </NotAuthorized>
-</AuthorizeView>
+<h2>Hello world!</h2>
+<p>Welcome @Username</p>
 
+@code {
+
+    private string Username;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        Username = await SessionStorage.GetItemAsync<string>("username");
+        StateHasChanged();
+    }
+}
