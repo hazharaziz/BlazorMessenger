@@ -23,7 +23,7 @@ namespace BlazorMessenger.Models
         [StringLength(70)]
         public string ComposerName { get; set; }
         [Column(TypeName = "datetime")]
-        public DateTime DateTime { get; set; }
+        public DateTime DateTime { get; set; } = DateTime.Now;
 
         [ForeignKey(nameof(ComposerId))]
         [InverseProperty(nameof(User.Messages))]

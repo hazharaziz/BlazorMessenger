@@ -3,13 +3,13 @@
 @inject Blazored.SessionStorage.ISessionStorageService SessionStorage
 @inject IMessengerAPI API
 
-<AuthorizeView>
+<AuthorizeView Context="AuthContext">
     <Authorized>
         @foreach (var message in messages)
         {
             var dateTime = (DateTime)message.DateTime;
             <div id="message-@message.Id" style="border-bottom: 1px black solid; padding: 10px;">
-                <a>@message.ComposerName</a>
+                <a href="#">@message.ComposerName</a>
                 @if (message.ReplyToId != 0)
                 {
                     <br />
@@ -21,6 +21,10 @@
                 <span>@dateTime.Hour : @dateTime.Minute</span>
             </div>
         }
+        <EditForm Model="@message" OnValidSubmit="@SubmitMessage" class="d-flex justify-content-center row" >
+            <input class="col-8" @bind="@message.Text" type="text" id="message-input" placeholder="Enter message"/>
+            <input class="col-2" type="submit" value="Submit"/>
+        </EditForm>
     </Authorized>
     <NotAuthorized>
         <Login />
@@ -30,12 +34,29 @@
 @code {
     private User currentUser;
     private List<Message> messages;
+    private Message message;
 
     protected override async Task OnInitializedAsync()
     {
+        message = new Message();
         messages = API.FetchMessages();
+        currentUser = new User();
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
         string currentUsername = await SessionStorage.GetItemAsync<string>("username");
         currentUser = API.GetCurrentUser(currentUsername);
+        StateHasChanged();
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private void SubmitMessage()
+    {
+        message.ComposerId = currentUser.Id;
+        message.ComposerName = $"{currentUser.FirstName} {currentUser.LastName}";
+        API.AddMessage(message);
         StateHasChanged();
     }
 }
