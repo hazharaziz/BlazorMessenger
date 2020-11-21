@@ -31,6 +31,7 @@ namespace BlazorMessenger
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
             services.AddTransient<IAuthenticationAPI, AuthenticationAPI>();
+            services.AddTransient<IMessengerAPI, MessengerAPI>();
             services.AddSingleton<WeatherForecastService>();
             services.AddDbContext<MessengerContext>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
