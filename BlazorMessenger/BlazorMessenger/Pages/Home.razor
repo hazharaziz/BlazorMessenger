@@ -1,0 +1,16 @@
+﻿@page "/"
+@page "/home"
+@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+
+<AuthorizeView>
+    <Authorized>
+        <p>Chat page</p>
+    </Authorized>
+    <NotAuthorized>
+        <Login />
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+}
