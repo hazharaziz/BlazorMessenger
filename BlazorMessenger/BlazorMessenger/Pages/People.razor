@@ -17,7 +17,7 @@
     var name = $"{user.FirstName} {user.LastName}";
     var followStatus = IsFollower(user.Id) ? "Unfollow" : "Follow";
     <div class="row" id="user-@user.Id" style="padding: 10px; border-bottom: 1px black solid;">
-        <a class="col-3">@name</a>
+        <a href="/profile/@user.Id" class="col-3">@name</a>
         <button class="col-1 ml-0">@followStatus</button>
         <button class="col-1 ml-0">Profile</button>
     </div>

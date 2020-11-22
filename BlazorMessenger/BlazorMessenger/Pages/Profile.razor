@@ -1,0 +1,41 @@
+﻿@page "/profile/{id:int}"
+@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+@inject IUnitOfWork UnitOfWork
+
+
+<div style="padding: 20px;">
+    <h2>@user.FirstName @user.LastName</h2>
+    @if (currentUser.Id != user.Id)
+    {
+        string followStatus = UnitOfWork.Followers.HasFollower(currentUser.Id, user.Id) ? "Unfollow" : "Follow";
+        <button>@followStatus</button>
+    } 
+    else
+    {
+        string status = (currentUser.IsPublic == 1) ? "Private" : "Public";
+        <button>Make your account @status</button>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private User user;
+    private User currentUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = new User();
+        currentUser = new User();
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        string currentUsername = await SessionStorage.GetItemAsync<string>("username");
+        user = UnitOfWork.Users.Get(Id);
+        currentUser = UnitOfWork.Users.GetByUsername(currentUsername);
+        StateHasChanged();
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}
