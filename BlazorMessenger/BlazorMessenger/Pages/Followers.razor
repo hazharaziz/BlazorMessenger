@@ -6,13 +6,45 @@
 {
     <h2>You have no followers</h2>
 }
+else
+{
+    @foreach (var follower in followers)
+    {
+        <div style="padding: 10px; border-bottom: 1px black solid;">
+            <a href="/profile/@follower.Id">@follower.FirstName @follower.LastName</a>
+            <button @onclick="(() => RemoveFollower(follower.Id))">Remove</button>
+        </div>
+    }
+}
 
 @code {
     private List<User> followers;
+    private int currentUserId;
 
     protected override async Task OnInitializedAsync()
     {
+        currentUserId = 0;
         followers = new List<User>();
         await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        currentUserId = await SessionStorage.GetItemAsync<int>("id");
+        followers = FollowerAPI.GetFollowers(currentUserId);
+        StateHasChanged();
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private void RemoveFollower(int userId)
+    {
+        try
+        {
+            FollowerAPI.Unfollow(currentUserId, userId);
+        }
+        catch
+        {
+
+        }
     }
 }
