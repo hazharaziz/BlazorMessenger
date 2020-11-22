@@ -1,0 +1,25 @@
+﻿@page "/followrequests"
+@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+@inject IFollowerAPI FollowerAPI
+
+
+<h3>FollowRequests</h3>
+
+@code {
+    private List<User> requestedUsers;
+    private int currentUserId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        requestedUsers = new List<User>();
+        currentUserId = 0;
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        currentUserId = await SessionStorage.GetItemAsync<int>("id");
+        requestedUsers = FollowerAPI.GetFollowRequests(currentUserId);
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}
