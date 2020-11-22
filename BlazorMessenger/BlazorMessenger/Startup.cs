@@ -36,6 +36,7 @@ namespace BlazorMessenger
             services.AddDbContext<MessengerContext>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<ISearchable<User>, PeopleAPI>();
+            services.AddTransient<IFollowerAPI, FollowerAPI>();
             services.AddDistributedMemoryCache();
             services.AddSession();
             services.AddBlazoredSessionStorage();
