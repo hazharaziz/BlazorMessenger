@@ -46,5 +46,15 @@ namespace BlazorMessenger.Services
 
         public bool IsFollowing(int userId, int followerId)
             => _unitOfWork.Followers.HasFollower(userId, followerId);
+
+        public void Unfollow(int userId, int followerId)
+        {
+            if (_unitOfWork.Followers.HasFollower(userId, followerId))
+            {
+                Follower follower = _unitOfWork.Followers.Find(f => f.UserId == userId && f.FollowerId == followerId).First();
+                _unitOfWork.Followers.Remove(follower);
+                _unitOfWork.Save();
+            }
+        }
     }
 }

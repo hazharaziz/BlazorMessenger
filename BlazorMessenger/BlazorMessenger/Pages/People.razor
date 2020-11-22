@@ -19,7 +19,7 @@
         <a href="/profile/@user.Id" class="col-3">@name</a>
         @if (IsFollowing(user.Id))
         {
-            <button class="col-1 ml-0">Unfollow</button>
+            <button class="col-1 ml-0" @onclick="(() => UnFollowUser(user.Id))">Unfollow</button>
         }
         else
         {
@@ -72,6 +72,15 @@
         try
         {
             FollowerAPI.Follow(userId, currentUserId);
+        }
+        catch { }
+    }
+
+    private void UnFollowUser(int userId)
+    {
+        try
+        {
+            FollowerAPI.Unfollow(userId, currentUserId);
         }
         catch { }
     }

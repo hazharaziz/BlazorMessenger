@@ -10,7 +10,7 @@
     {
         @if (IsFollowing(user.Id))
         {
-            <button>Unfollow</button>
+            <button @onclick="(() => UnFollowUser(user.Id))">Unfollow</button>
         }
         else
         {
@@ -54,6 +54,15 @@
         try
         {
             FollowerAPI.Follow(userId, currentUser.Id);
+        }
+        catch { }
+    }
+
+    private void UnFollowUser(int userId)
+    {
+        try
+        {
+            FollowerAPI.Unfollow(userId, currentUser.Id);
         }
         catch { }
     }
