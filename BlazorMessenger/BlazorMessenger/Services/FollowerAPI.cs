@@ -70,7 +70,17 @@ namespace BlazorMessenger.Services
                 follower.Pending = 0;
                 _unitOfWork.Save();
             }
-        }        
+        }
+
+        public void RejectFollowRequest(int userId, int followerId)
+        {
+            if (_unitOfWork.Followers.HasRequestFrom(userId, followerId))
+            {
+                Follower follower = _unitOfWork.Followers.Find(f => f.UserId == userId && f.FollowerId == followerId).First();
+                _unitOfWork.Followers.Remove(follower);
+                _unitOfWork.Save();
+            }
+        }
 
         public bool HasFollower(int userId, int followerId)
             => _unitOfWork.Followers.HasFollower(userId, followerId);
