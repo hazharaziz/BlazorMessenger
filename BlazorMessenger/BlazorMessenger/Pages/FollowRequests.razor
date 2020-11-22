@@ -3,7 +3,16 @@
 @inject IFollowerAPI FollowerAPI
 
 
-<h3>FollowRequests</h3>
+<div>
+    @foreach (var user in requestedUsers)
+    {
+        <div style="padding: 10px; border-bottom: 1px black solid;">
+            <a>@user.FirstName @user.LastName</a>
+            <button class="col-1 ml-0" @onclick="(() => AcceptRequest(currentUserId, user.Id))">Accept Request</button>
+            <button class="col-1 ml-0" @onclick="(() => RejectRequest(currentUserId, user.Id))">Reject Request</button>
+        </div>
+    }
+</div>
 
 @code {
     private List<User> requestedUsers;
@@ -20,6 +29,29 @@
     {
         currentUserId = await SessionStorage.GetItemAsync<int>("id");
         requestedUsers = FollowerAPI.GetFollowRequests(currentUserId);
+        StateHasChanged();
         await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private void AcceptRequest(int userId, int followerId)
+    {
+        try
+        {
+            FollowerAPI.AcceptFollowRequest(userId, followerId);
+        }
+        catch (Exception)
+        {
+        }
+    }
+
+    private void RejectRequest(int userId, int followerId)
+    {
+        try
+        {
+            FollowerAPI.RejectFollowRequest(userId, followerId);
+        }
+        catch (Exception)
+        {
+        }
     }
 }
