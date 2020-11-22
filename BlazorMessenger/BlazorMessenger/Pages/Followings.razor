@@ -3,7 +3,20 @@
 @inject Blazored.SessionStorage.ISessionStorageService SessionStorage
 
 
-<h3>Followings</h3>
+@if (followings.Count == 0)
+{
+    <h2>You have followed no one!</h2>
+}
+else
+{
+    @foreach (var following in followings)
+    {
+        <div style="padding: 10px; border-bottom: 1px black solid;">
+            <a href="/profile/@following.Id">@following.FirstName @following.LastName</a>
+            <button @onclick="(() => UnFollowUser(following.Id))">Unfollow</button>
+        </div>
+    }
+}
 
 @code {
     private List<User> followings;
@@ -12,7 +25,7 @@
     protected override async Task OnInitializedAsync()
     {
         followings = new List<User>();
-        await base.OnInitializedAsync();   
+        await base.OnInitializedAsync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -23,4 +36,15 @@
         await base.OnAfterRenderAsync(firstRender);
     }
 
+    private void UnFollowUser(int userId)
+    {
+        try
+        {
+            FollowerAPI.Unfollow(userId, currentUserId);
+        }
+        catch (Exception)
+        {
+
+        }
+    }
 }
