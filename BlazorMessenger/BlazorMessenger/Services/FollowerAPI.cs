@@ -56,5 +56,23 @@ namespace BlazorMessenger.Services
                 _unitOfWork.Save();
             }
         }
+
+        public List<User> GetFollowings(int userId)
+        {
+            List<int> followingIds = _unitOfWork.Followers.Find(f => f.FollowerId == userId)
+                .Select(f => f.UserId).ToList();
+            List<User> followings = new List<User>();
+            foreach (int id in followingIds)
+            {
+                followings.Add(_unitOfWork.Users.Get(id));
+            }
+            return followings;
+        }
+
+        public List<User> GetFollowings(string username)
+        {
+            User user = _unitOfWork.Users.GetByUsername(username);
+            return GetFollowings(user.Id);
+        }
     }
 }
