@@ -31,7 +31,7 @@ namespace BlazorMessenger.Services
             List<Message> filteredMessages = new List<Message>();
             foreach (var message in allMessages)
             {
-                if (followingsIds.Contains(message.ComposerId))
+                if (followingsIds.Contains(message.ComposerId) || message.ComposerId == userId)
                 {
                     filteredMessages.Add(message);  
                 }
@@ -49,14 +49,15 @@ namespace BlazorMessenger.Services
             _unitOfWork.Save();
         }
 
-        public void EditMessage(int id, string editedMessage)
+        public void EditMessage(int id, Message message)
         {
-            if (editedMessage == string.Empty)
+            if (message == null)
             {
                 throw new Exception(Alerts.InvalidMessage);
             }
-            Message message = _unitOfWork.Messages.Get(id);
-            message.Text = editedMessage;
+            Message targetMessage = _unitOfWork.Messages.Get(id);
+            targetMessage.Text = message.Text;
+            targetMessage.ReplyToId = message.ReplyToId;
             _unitOfWork.Save();
         }
 

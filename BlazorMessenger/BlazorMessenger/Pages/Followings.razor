@@ -3,19 +3,12 @@
 @inject Blazored.SessionStorage.ISessionStorageService SessionStorage
 
 
-@if (followings.Count == 0)
+@foreach (var following in followings)
 {
-    <h2>You have followed no one!</h2>
-}
-else
-{
-    @foreach (var following in followings)
-    {
-        <div style="padding: 10px; border-bottom: 1px black solid;">
-            <a href="/profile/@following.Id">@following.FirstName @following.LastName</a>
-            <button @onclick="(() => UnFollowUser(following.Id))">Unfollow</button>
-        </div>
-    }
+    <div style="padding: 10px; border-bottom: 1px black solid;">
+        <a href="/profile/@following.Id">@following.FirstName @following.LastName</a>
+        <button @onclick="(() => UnFollowUser(following.Id))">Unfollow</button>
+    </div>
 }
 
 @code {

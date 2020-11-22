@@ -11,7 +11,7 @@ namespace BlazorMessenger.Interfaces
         List<Message> FetchMessages();
         List<Message> FetchFriendsMessages(int userId);
         void AddMessage(Message message);
-        void EditMessage(int id, string editedMessage);
+        void EditMessage(int id, Message message);
         User GetCurrentUser(string username);
     }
 }

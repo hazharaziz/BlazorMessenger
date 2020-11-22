@@ -64,9 +64,9 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        messages = API.FetchMessages();
         string currentUsername = await SessionStorage.GetItemAsync<string>("username");
         currentUser = API.GetCurrentUser(currentUsername);
+        messages = API.FetchFriendsMessages(currentUser.Id);
         StateHasChanged();
         await base.OnAfterRenderAsync(firstRender);
     }
@@ -77,7 +77,11 @@
         {
             if (editMessageId != 0)
             {
-                API.EditMessage(editMessageId, message.Text);
+                if (replyMessageId != 0)
+                {
+                    message.ReplyToId = replyMessageId;
+                }
+                API.EditMessage(editMessageId, message);
             }
             else
             {

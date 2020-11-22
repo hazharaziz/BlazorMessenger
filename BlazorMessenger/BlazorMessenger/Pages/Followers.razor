@@ -2,19 +2,12 @@
 @inject IFollowerAPI FollowerAPI
 @inject Blazored.SessionStorage.ISessionStorageService SessionStorage
 
-@if (followers.Count == 0)
+@foreach (var follower in followers)
 {
-    <h2>You have no followers!</h2>
-}
-else
-{
-    @foreach (var follower in followers)
-    {
-        <div style="padding: 10px; border-bottom: 1px black solid;">
-            <a href="/profile/@follower.Id">@follower.FirstName @follower.LastName</a>
-            <button @onclick="(() => RemoveFollower(follower.Id))">Remove</button>
-        </div>
-    }
+    <div style="padding: 10px; border-bottom: 1px black solid;">
+        <a href="/profile/@follower.Id">@follower.FirstName @follower.LastName</a>
+        <button @onclick="(() => RemoveFollower(follower.Id))">Remove</button>
+    </div>
 }
 
 @code {
