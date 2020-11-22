@@ -1,15 +1,46 @@
 ﻿@page "/people"
+@inject ISearchable<User> API
 
 <h3>Search People</h3>
-<input type="text" @bind="searchQuery" />
+<EditForm Model="@searchQuery" OnValidSubmit="@SearchUser" class="mr-auto" style="margin: 10px;">
+    <div style="display: block;">
+        <input class="col-8" @bind="@searchQuery" type="text" id="search-input" placeholder="Search people" />
+        <input class="col-2" type="submit" value="Submit" />
+    </div>
+</EditForm>
+
+@foreach (var user in fetchedUsers)
+{
+    var name = $"{user.FirstName} {user.LastName}";
+    <div class="row" id="user-@user.Id" style="padding: 10px; border-bottom: 1px black solid;">
+        <a class="col-3">@name</a>
+        <button class="col-1 ml-0">Follow</button>
+        <button class="col-1 ml-0">Profile</button>
+    </div>
+}
 
 @code {
 
     private string searchQuery;
+    private List<User> fetchedUsers;
 
     protected override async Task OnInitializedAsync()
     {
         searchQuery = string.Empty;
+        fetchedUsers = new List<User>();
         await base.OnInitializedAsync();
+    }
+
+    private async Task<bool> SearchUser()
+    {
+        try
+        {
+            fetchedUsers = API.Search(searchQuery);
+            return await Task.FromResult(true);
+        }
+        catch
+        {
+            return await Task.FromResult(false);
+        }
     }
 }
