@@ -10,5 +10,6 @@ namespace BlazorMessenger.Interfaces
     {
         List<User> GetFollowers(int id);
         List<User> GetFollowers(string username);
+        void Follow(int userId, int followerId);
     }
 }

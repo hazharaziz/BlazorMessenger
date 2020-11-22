@@ -33,5 +33,13 @@ namespace BlazorMessenger.Services
             User user = _unitOfWork.Users.GetByUsername(username);
             return GetFollowers(user.Id);
         }
+
+        public void Follow(int userId, int followerId)
+        {
+            Follower follower = new Follower() { UserId = userId, FollowerId = followerId };
+            _unitOfWork.Followers.Add(follower);
+            _unitOfWork.Save();
+        }
+
     }
 }
