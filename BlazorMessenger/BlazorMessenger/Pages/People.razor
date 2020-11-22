@@ -1,5 +1,8 @@
 ﻿@page "/people"
-@inject ISearchable<User> API
+@inject ISearchable<User> SearchAPI
+@inject IFollowerAPI FollowerAPI
+@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+
 
 <h3>Search People</h3>
 <EditForm Model="@searchQuery" OnValidSubmit="@SearchUser" class="mr-auto" style="margin: 10px;">
@@ -9,12 +12,13 @@
     </div>
 </EditForm>
 
-@foreach (var user in fetchedUsers)
+@foreach (User user in fetchedUsers)
 {
     var name = $"{user.FirstName} {user.LastName}";
+    var followStatus = IsFollower(user.Id) ? "Unfollow" : "Follow";
     <div class="row" id="user-@user.Id" style="padding: 10px; border-bottom: 1px black solid;">
         <a class="col-3">@name</a>
-        <button class="col-1 ml-0">Follow</button>
+        <button class="col-1 ml-0">@followStatus</button>
         <button class="col-1 ml-0">Profile</button>
     </div>
 }
@@ -23,19 +27,29 @@
 
     private string searchQuery;
     private List<User> fetchedUsers;
+    private List<User> currentUserFollowers;
 
     protected override async Task OnInitializedAsync()
     {
         searchQuery = string.Empty;
         fetchedUsers = new List<User>();
+        currentUserFollowers = new List<User>();
         await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        string username = await SessionStorage.GetItemAsync<string>("username");
+        currentUserFollowers = FollowerAPI.GetFollowers(username);
+        StateHasChanged();
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task<bool> SearchUser()
     {
         try
         {
-            fetchedUsers = API.Search(searchQuery);
+            fetchedUsers = (searchQuery != "") ? SearchAPI.Search(searchQuery) : new List<User>();
             return await Task.FromResult(true);
         }
         catch
@@ -43,4 +57,7 @@
             return await Task.FromResult(false);
         }
     }
+
+    private bool IsFollower(int id) =>
+        currentUserFollowers.Any(f => f.Id == id);
 }

@@ -9,5 +9,6 @@ namespace BlazorMessenger.Interfaces
     public interface IFollowerAPI
     {
         List<User> GetFollowers(int id);
+        List<User> GetFollowers(string username);
     }
 }

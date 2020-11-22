@@ -27,5 +27,11 @@ namespace BlazorMessenger.Services
             }
             return followers;
         }
+
+        public List<User> GetFollowers(string username)
+        {
+            User user = _unitOfWork.Users.GetByUsername(username);
+            return GetFollowers(user.Id);
+        }
     }
 }
