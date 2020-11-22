@@ -20,6 +20,7 @@ namespace BlazorMessenger.Models
         public int UserId { get; set; }
         [Column("FollowerID")]
         public int FollowerId { get; set; }
+        public int Pending { get; set; }
 
         [ForeignKey(nameof(FollowerId))]
         [InverseProperty("FollowerFollowerNavigations")]

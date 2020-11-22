@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
@@ -23,7 +25,7 @@ namespace BlazorMessenger.Models
         [StringLength(70)]
         public string ComposerName { get; set; }
         [Column(TypeName = "datetime")]
-        public DateTime DateTime { get; set; } = DateTime.Now;
+        public DateTime DateTime { get; set; }
 
         [ForeignKey(nameof(ComposerId))]
         [InverseProperty(nameof(User.Messages))]
