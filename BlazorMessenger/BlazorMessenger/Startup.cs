@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using BlazorMessenger.Authentication;
 using Blazored.SessionStorage;
 using BlazorMessenger.Services;
+using BlazorMessenger.Models;
 
 namespace BlazorMessenger
 {
@@ -34,6 +35,7 @@ namespace BlazorMessenger
             services.AddTransient<IMessengerAPI, MessengerAPI>();
             services.AddDbContext<MessengerContext>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<ISearchable<User>, PeopleAPI>();
             services.AddDistributedMemoryCache();
             services.AddSession();
             services.AddBlazoredSessionStorage();
