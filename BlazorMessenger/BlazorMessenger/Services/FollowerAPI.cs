@@ -36,7 +36,7 @@ namespace BlazorMessenger.Services
 
         public List<User> GetFollowings(int userId)
         {
-            List<int> followingIds = _unitOfWork.Followers.Find(f => f.FollowerId == userId)
+            List<int> followingIds = _unitOfWork.Followers.Find(f => (f.FollowerId == userId) && f.Pending == 0)
                 .Select(f => f.UserId).ToList();
             List<User> followings = new List<User>();
             foreach (int id in followingIds)

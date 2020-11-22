@@ -8,7 +8,16 @@
     <h2>@user.FirstName @user.LastName</h2>
     @if (currentUser.Id != user.Id)
     {
-        @if (IsFollowing(user.Id))
+        @if (FollowerAPI.HasRequestFrom(currentUser.Id, user.Id))
+        {
+            <button @onclick="(() => AcceptRequest(currentUser.Id, user.Id))">Accept Request</button>
+            <button @onclick="(() => RejectRequest(currentUser.Id, user.Id))">Reject Request</button>
+        }
+        @if (FollowerAPI.HasRequestFrom(user.Id, currentUser.Id))
+        {
+            <button @onclick="(() => CancelRequest(user.Id, currentUser.Id))">Cancel Follow Request</button>
+        }
+        else if (FollowerAPI.HasFollower(user.Id, currentUser.Id))
         {
             <button @onclick="(() => UnFollowUser(user.Id))">Unfollow</button>
         }
@@ -46,8 +55,7 @@
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private bool IsFollowing(int id) =>
-        FollowerAPI.HasFollower(id, currentUser.Id);
+
 
     private void FollowUser(int userId)
     {
@@ -65,5 +73,38 @@
             FollowerAPI.Unfollow(userId, currentUser.Id);
         }
         catch { }
+    }
+
+    private void AcceptRequest(int userId, int followerId)
+    {
+        try
+        {
+            FollowerAPI.AcceptFollowRequest(userId, followerId);
+        }
+        catch (Exception)
+        {
+        }
+    }
+
+    private void RejectRequest(int userId, int followerId)
+    {
+        try
+        {
+            FollowerAPI.RejectFollowRequest(userId, followerId);
+        }
+        catch (Exception)
+        {
+        }
+    }
+
+    private void CancelRequest(int userId, int followerId)
+    {
+        try
+        {
+            FollowerAPI.CancelRequest(userId, followerId);
+        }
+        catch (Exception)
+        {
+        }
     }
 }
