@@ -1,0 +1,15 @@
+﻿@page "/friends"
+@inject IFollowerAPI FollowerAPI
+@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+
+<h3>Friends</h3>
+
+@code {
+    private List<User> friends;
+
+    protected override async Task OnInitializedAsync()
+    {
+        friends = new List<User>();
+        await base.OnInitializedAsync();
+    }
+}
