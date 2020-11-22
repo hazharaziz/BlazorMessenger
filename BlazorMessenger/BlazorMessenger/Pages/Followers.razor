@@ -1,15 +1,18 @@
-﻿@page "/friends"
+﻿@page "/followers"
 @inject IFollowerAPI FollowerAPI
 @inject Blazored.SessionStorage.ISessionStorageService SessionStorage
 
-<h3>Friends</h3>
+@if (followers.Count == 0)
+{
+    <h2>You have no followers</h2>
+}
 
 @code {
-    private List<User> friends;
+    private List<User> followers;
 
     protected override async Task OnInitializedAsync()
     {
-        friends = new List<User>();
+        followers = new List<User>();
         await base.OnInitializedAsync();
     }
 }
