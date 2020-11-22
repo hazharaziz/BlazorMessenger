@@ -52,6 +52,24 @@ namespace BlazorMessenger.Services
             return GetFollowings(user.Id);
         }
 
+        public List<User> GetFollowRequests(int userId)
+        {
+            List<int> followRequestsIds = _unitOfWork.Followers.Find(f => (f.UserId == userId) && f.Pending == 1)
+                .Select(f => f.FollowerId).ToList();
+            List<User> followRequests = new List<User>();
+            foreach (int id in followRequestsIds)
+            {
+                followRequests.Add(_unitOfWork.Users.Get(id));
+            }
+            return followRequests;
+        }
+
+        public List<User> GetFollowRequests(string username)
+        {
+            User user = _unitOfWork.Users.GetByUsername(username);
+            return GetFollowRequests(user.Id);
+        }
+
         public void SendFollowRequest(int userId, int followerId)
         {
             if (!_unitOfWork.Followers.HasFollower(userId, followerId))
