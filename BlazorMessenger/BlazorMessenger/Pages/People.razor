@@ -15,18 +15,27 @@
 @foreach (User user in fetchedUsers)
 {
     var name = $"{user.FirstName} {user.LastName}";
-    <div class="row" id="user-@user.Id" style="padding: 10px; border-bottom: 1px black solid;">
-        <a href="/profile/@user.Id" class="col-3">@name</a>
-        @if (IsFollowing(user.Id))
-        {
-            <button class="col-1 ml-0" @onclick="(() => UnFollowUser(user.Id))">Unfollow</button>
-        }
-        else
-        {
-            <button class="col-1 ml-0" @onclick="(() => FollowUser(user.Id))">Follow</button>
-        }
-        <button class="col-1 ml-0">Profile</button>
-    </div>
+<div class="row" id="user-@user.Id" style="padding: 10px; border-bottom: 1px black solid;">
+    <a href="/profile/@user.Id" class="col-3">@name</a>
+    @if (FollowerAPI.HasRequestFrom(currentUserId, user.Id))
+    {
+        <button class="col-1 ml-0" @onclick="(() => AcceptRequest(currentUserId, user.Id))">Accept Request</button>
+        <button class="col-1 ml-0" @onclick="(() => RejectRequest(currentUserId, user.Id))">Reject Request</button>
+    }
+    @if (FollowerAPI.HasRequestFrom(user.Id, currentUserId))
+    {
+        <button class="col-1 ml-0" @onclick="(() => CancelRequest(user.Id, currentUserId))">Cancel Follow Request</button>
+    }
+    else if (FollowerAPI.HasFollower(user.Id, currentUserId))
+    {
+        <button class="col-1 ml-0" @onclick="(() => UnFollowUser(user.Id, currentUserId))">Unfollow</button>
+    }
+    else
+    {
+        <button class="col-1 ml-0" @onclick="(() => FollowUser(user.Id, currentUserId))">Follow</button>
+    }
+    <a href="/profile/@user.Id" class="col-1 ml-0">Profile</a>
+</div>
 }
 
 @code {
@@ -64,24 +73,54 @@
         }
     }
 
-    private bool IsFollowing(int id) =>
-        FollowerAPI.HasFollower(id, currentUserId);
-
-    private void FollowUser(int userId)
+    private void FollowUser(int userId, int followerId)
     {
         try
         {
-            FollowerAPI.SendFollowRequest(userId, currentUserId);
+            FollowerAPI.SendFollowRequest(userId, followerId);
         }
         catch { }
     }
 
-    private void UnFollowUser(int userId)
+    private void UnFollowUser(int userId, int followerId)
     {
         try
         {
-            FollowerAPI.Unfollow(userId, currentUserId);
+            FollowerAPI.Unfollow(userId, followerId);
         }
         catch { }
+    }
+
+    private void AcceptRequest(int userId, int followerId)
+    {
+        try
+        {
+            FollowerAPI.AcceptFollowRequest(userId, followerId);
+        }
+        catch (Exception)
+        {
+        }
+    }
+
+    private void RejectRequest(int userId, int followerId)
+    {
+        try
+        {
+            FollowerAPI.RejectFollowRequest(userId, followerId);
+        }
+        catch (Exception)
+        {
+        }
+    }
+
+    private void CancelRequest(int userId, int followerId)
+    {
+        try
+        {
+            FollowerAPI.CancelRequest(userId, followerId);
+        }
+        catch (Exception)
+        {
+        }
     }
 }

@@ -82,8 +82,12 @@ namespace BlazorMessenger.Services
             }
         }
 
-        public bool HasFollower(int userId, int followerId)
-            => _unitOfWork.Followers.HasFollower(userId, followerId);
+        public void CancelRequest(int userId, int followerId)
+        {
+            Follower follower = _unitOfWork.Followers.Find(f => f.UserId == userId && f.FollowerId == followerId).First();
+            _unitOfWork.Followers.Remove(follower);
+            _unitOfWork.Save();
+        }
 
         public void Unfollow(int userId, int followerId)
         {
@@ -94,5 +98,11 @@ namespace BlazorMessenger.Services
                 _unitOfWork.Save();
             }
         }
+
+        public bool HasFollower(int userId, int followerId)
+            => _unitOfWork.Followers.HasFollower(userId, followerId);
+
+        public bool HasRequestFrom(int userId, int followerid)
+            => _unitOfWork.Followers.HasRequestFrom(userId, followerid);
     }
 }

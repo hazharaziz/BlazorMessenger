@@ -37,16 +37,26 @@ namespace BlazorMessenger.Repositories
 
         public bool HasFollower(int userId, int followerId)
         {
+            bool result = false;
             Follower follower = Find(f => ((f.UserId == userId) && (f.FollowerId == followerId)))
                 .FirstOrDefault();
-            return (follower != null) && (follower.Pending == 0);
+            if (follower != null)
+            {
+                result = follower.Pending == 0;
+            }
+            return result;
         }
 
         public bool HasRequestFrom(int userId, int followerId)
         {
+            bool result = false;
             Follower follower = Find(f => ((f.UserId == userId) && (f.FollowerId == followerId)))
                 .FirstOrDefault();
-            return (follower.Pending == 1);
+            if (follower != null)
+            {
+                result = follower.Pending == 1;
+            }
+            return result;
         }
     }
 }
