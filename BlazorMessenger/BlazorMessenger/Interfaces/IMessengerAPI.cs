@@ -9,6 +9,7 @@ namespace BlazorMessenger.Interfaces
     public interface IMessengerAPI
     {
         List<Message> FetchMessages();
+        List<Message> FetchFriendsMessages(int userId);
         void AddMessage(Message message);
         void EditMessage(int id, string editedMessage);
         User GetCurrentUser(string username);
