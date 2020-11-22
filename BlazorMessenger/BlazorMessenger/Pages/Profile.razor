@@ -47,13 +47,13 @@
     }
 
     private bool IsFollowing(int id) =>
-        FollowerAPI.IsFollowing(id, currentUser.Id);
+        FollowerAPI.HasFollower(id, currentUser.Id);
 
     private void FollowUser(int userId)
     {
         try
         {
-            FollowerAPI.Follow(userId, currentUser.Id);
+            FollowerAPI.SendFollowRequest(userId, currentUser.Id);
         }
         catch { }
     }

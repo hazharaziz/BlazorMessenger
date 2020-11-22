@@ -12,8 +12,9 @@ namespace BlazorMessenger.Interfaces
         List<User> GetFollowers(string username);
         List<User> GetFollowings(int id);
         List<User> GetFollowings(string username);
-        void Follow(int userId, int followerId);
+        void SendFollowRequest(int userId, int followerId);
+        void AcceptFollowRequest(int userId, int followerId);
         void Unfollow(int userId, int followerId);
-        bool IsFollowing(int userId, int followerId);
+        bool HasFollower(int userId, int followerId);
     }
 }
