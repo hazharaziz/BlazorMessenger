@@ -25,7 +25,7 @@ namespace BlazorMessenger.Services
             {
                 throw new Exception(Alerts.InvalidLoginInfo);
             }
-
+            user.Id = fetchedUser.Id;
             bool validUser = ValidateUserLoginRequest(user, fetchedUser);
             string name = $"{fetchedUser.FirstName} {fetchedUser.LastName}";
 

@@ -1,15 +1,22 @@
 ﻿@page "/profile/{id:int}"
 @inject Blazored.SessionStorage.ISessionStorageService SessionStorage
 @inject IUnitOfWork UnitOfWork
+@inject IFollowerAPI FollowerAPI
 
 
 <div style="padding: 20px;">
     <h2>@user.FirstName @user.LastName</h2>
     @if (currentUser.Id != user.Id)
     {
-        string followStatus = UnitOfWork.Followers.HasFollower(currentUser.Id, user.Id) ? "Unfollow" : "Follow";
-        <button>@followStatus</button>
-    } 
+        @if (IsFollowing(user.Id))
+        {
+            <button>Unfollow</button>
+        }
+        else
+        {
+            <button @onclick="(() => FollowUser(user.Id))">Follow</button>
+        }
+    }
     else
     {
         string status = (currentUser.IsPublic == 1) ? "Private" : "Public";
@@ -37,5 +44,17 @@
         currentUser = UnitOfWork.Users.GetByUsername(currentUsername);
         StateHasChanged();
         await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private bool IsFollowing(int id) =>
+        FollowerAPI.IsFollowing(id, currentUser.Id);
+
+    private void FollowUser(int userId)
+    {
+        try
+        {
+            FollowerAPI.Follow(userId, currentUser.Id);
+        }
+        catch { }
     }
 }

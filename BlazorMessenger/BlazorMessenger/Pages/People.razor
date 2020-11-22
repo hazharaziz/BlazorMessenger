@@ -15,10 +15,16 @@
 @foreach (User user in fetchedUsers)
 {
     var name = $"{user.FirstName} {user.LastName}";
-    var followStatus = IsFollower(user.Id) ? "Unfollow" : "Follow";
     <div class="row" id="user-@user.Id" style="padding: 10px; border-bottom: 1px black solid;">
         <a href="/profile/@user.Id" class="col-3">@name</a>
-        <button class="col-1 ml-0">@followStatus</button>
+        @if (IsFollowing(user.Id))
+        {
+            <button class="col-1 ml-0">Unfollow</button>
+        }
+        else
+        {
+            <button class="col-1 ml-0" @onclick="(() => FollowUser(user.Id))">Follow</button>
+        }
         <button class="col-1 ml-0">Profile</button>
     </div>
 }
@@ -26,21 +32,21 @@
 @code {
 
     private string searchQuery;
+    private int currentUserId;
     private List<User> fetchedUsers;
-    private List<User> currentUserFollowers;
 
     protected override async Task OnInitializedAsync()
     {
         searchQuery = string.Empty;
+        currentUserId = 0;
         fetchedUsers = new List<User>();
-        currentUserFollowers = new List<User>();
         await base.OnInitializedAsync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         string username = await SessionStorage.GetItemAsync<string>("username");
-        currentUserFollowers = FollowerAPI.GetFollowers(username);
+        currentUserId = await SessionStorage.GetItemAsync<int>("id");
         StateHasChanged();
         await base.OnAfterRenderAsync(firstRender);
     }
@@ -58,6 +64,15 @@
         }
     }
 
-    private bool IsFollower(int id) =>
-        currentUserFollowers.Any(f => f.Id == id);
+    private bool IsFollowing(int id) =>
+        FollowerAPI.IsFollowing(id, currentUserId);
+
+    private void FollowUser(int userId)
+    {
+        try
+        {
+            FollowerAPI.Follow(userId, currentUserId);
+        }
+        catch { }
+    }
 }

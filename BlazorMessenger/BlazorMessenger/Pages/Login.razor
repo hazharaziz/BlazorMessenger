@@ -49,6 +49,7 @@
             API.LoginUser(user);
             Navigator.NavigateTo("/home");
             await SessionStorage.SetItemAsync("username", user.Username);
+            await SessionStorage.SetItemAsync<int>("id", user.Id);
             return await Task.FromResult(true);
         }
         catch

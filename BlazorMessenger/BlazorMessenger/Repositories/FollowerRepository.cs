@@ -35,9 +35,9 @@ namespace BlazorMessenger.Repositories
         public void RemoveRange(IEnumerable<Follower> entities)
             => Context.Set<Follower>().RemoveRange(entities);
 
-        public bool HasFollower(int currentUserId, int targetUserId)
+        public bool HasFollower(int userId, int followerId)
         {
-            Follower follower = Find(f => ((f.UserId == currentUserId) && (f.FollowerId == targetUserId)))
+            Follower follower = Find(f => ((f.UserId == userId) && (f.FollowerId == followerId)))
                 .FirstOrDefault();
             return (follower != null);
         }

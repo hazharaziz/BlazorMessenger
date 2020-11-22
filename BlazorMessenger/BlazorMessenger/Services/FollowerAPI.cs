@@ -36,10 +36,15 @@ namespace BlazorMessenger.Services
 
         public void Follow(int userId, int followerId)
         {
-            Follower follower = new Follower() { UserId = userId, FollowerId = followerId };
-            _unitOfWork.Followers.Add(follower);
-            _unitOfWork.Save();
+            if (!_unitOfWork.Followers.HasFollower(userId, followerId))
+            {
+                Follower follower = new Follower() { UserId = userId, FollowerId = followerId };
+                _unitOfWork.Followers.Add(follower);
+                _unitOfWork.Save();
+            }
         }
 
+        public bool IsFollowing(int userId, int followerId)
+            => _unitOfWork.Followers.HasFollower(userId, followerId);
     }
 }
