@@ -1,7 +1,15 @@
 ﻿@page "/people"
 
-<h3>People</h3>
+<h3>Search People</h3>
+<input type="text" @bind="searchQuery"/>
 
 @code {
 
+    private string searchQuery;
+
+    protected override async Task OnInitializedAsync()
+    {
+        searchQuery = string.Empty;
+        await base.OnInitializedAsync();
+    }
 }
