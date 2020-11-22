@@ -7,26 +7,28 @@
 @inject IJSRuntime JsRuntime
 @inject IUnitOfWork UnitOfWork
 
-<h3>Login</h3>
-<EditForm Model="@user" OnValidSubmit="@ValidatUser">
-    <div>
-        <input type="text" @bind="@user.Username" id="username-input" />
-        <label for="username-input">Username</label>
-    </div>
+<div class="justify-content-center" style="margin: auto;">
+    <h3>Login</h3>
+    <EditForm Model="@user" OnValidSubmit="@ValidatUser">
+        <div>
+            <input type="text" @bind="@user.Username" id="username-input" />
+            <label for="username-input">Username</label>
+        </div>
 
-    <div>
-        <input type="password" @ref="@passwordInput" @bind="@user.Password" id="password-input" />
-        <label for="password-input">Password</label>
-    </div>
+        <div>
+            <input type="password" @ref="@passwordInput" @bind="@user.Password" id="password-input" />
+            <label for="password-input">Password</label>
+        </div>
 
-    <div>
-        <input type="checkbox" @onclick="(() => TogglePassword())" id="toggle-password-checkbox" />
-        <label for="toggle-password-checkbox">Show Password</label>
-    </div>
+        <div>
+            <input type="checkbox" @onclick="(() => TogglePassword())" id="toggle-password-checkbox" />
+            <label for="toggle-password-checkbox">Show Password</label>
+        </div>
 
-    <input type="submit" value="Login" />
-    <a href="/signup">Sign up</a>
-</EditForm>
+        <input type="submit" value="Login" />
+        <a href="/signup">Sign up</a>
+    </EditForm>
+</div>
 
 
 @code {
