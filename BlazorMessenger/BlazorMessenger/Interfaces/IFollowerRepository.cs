@@ -15,5 +15,6 @@ namespace BlazorMessenger.Interfaces
         void Remove(Follower entity);
         void RemoveRange(IEnumerable<Follower> entities);
         bool HasFollower(int userId, int followerId);
+        bool HasRequestFrom(int userId, int followerId);
     }
 }
