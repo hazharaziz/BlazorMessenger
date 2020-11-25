@@ -87,6 +87,7 @@
             {
                 message.ComposerId = currentUser.Id;
                 message.ComposerName = $"{currentUser.FirstName} {currentUser.LastName}";
+                message.DateTime = DateTime.Now;
                 if (replyMessageId != 0)
                 {
                     message.ReplyToId = replyMessageId;

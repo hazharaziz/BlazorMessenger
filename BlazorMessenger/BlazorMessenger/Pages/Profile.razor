@@ -29,7 +29,7 @@
     else
     {
         string status = (currentUser.IsPublic == 1) ? "Private" : "Public";
-        <button>Make your account @status</button>
+        <button @onclick="(() => ToggleAccountAccessibility(currentUser.Id))">Make your account @status</button>
     }
 </div>
 
@@ -105,6 +105,20 @@
         }
         catch (Exception)
         {
+        }
+    }
+
+    private void ToggleAccountAccessibility(int userId)
+    {
+        try
+        {
+            User user = UnitOfWork.Users.Get(userId);
+            user.IsPublic = (user.IsPublic == 1) ? 0 : 1;
+            UnitOfWork.Save();
+        }
+        catch
+        {
+                
         }
     }
 }

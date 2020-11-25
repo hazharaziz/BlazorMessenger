@@ -72,9 +72,15 @@ namespace BlazorMessenger.Services
 
         public void SendFollowRequest(int userId, int followerId)
         {
+            bool isPublicUser = _unitOfWork.Users.Get(userId).IsPublic == 1;
             if (!_unitOfWork.Followers.HasFollower(userId, followerId))
             {
-                Follower follower = new Follower() { UserId = userId, FollowerId = followerId, Pending = 1 };
+                Follower follower = new Follower()
+                {
+                    UserId = userId,
+                    FollowerId = followerId,
+                    Pending = (isPublicUser) ? 0 : 1 
+                };
                 _unitOfWork.Followers.Add(follower);
                 _unitOfWork.Save();
             }
